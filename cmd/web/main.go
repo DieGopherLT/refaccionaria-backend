@@ -21,6 +21,7 @@ func main() {
 
 	server := http.Server{
 		Addr: PORT,
+		Handler: Routes(),
 	}
 
 	fmt.Println("Server working on port", PORT)
