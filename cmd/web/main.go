@@ -12,7 +12,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const PORT = ":4000"
+const PORT = 4000
 
 func main() {
 
@@ -28,7 +28,7 @@ func main() {
 	controller.NewHandlers(repo)
 
 	server := http.Server{
-		Addr:    PORT,
+		Addr:    fmt.Sprintf(":%d", PORT),
 		Handler: Routes(),
 	}
 
