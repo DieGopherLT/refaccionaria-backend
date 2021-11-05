@@ -13,15 +13,22 @@ func Routes() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(middleware.Recoverer)
-	mux.Use(middleware.Timeout(3 * time.Second))
+	mux.Use(middleware.Timeout(5 * time.Second))
 
 	mux.Route("/api/v1", func(r chi.Router) {
 
 		r.Route("/product", func(r chi.Router) {
-			r.Get("/", controller.Repo.GetAllProducts)
-			r.Post("/", controller.Repo.AddProduct)
-			r.Put("/", controller.Repo.UpdateProduct)
+			r.Get("/", controller.Repo.GetProducts)
+			r.Post("/", controller.Repo.PostProduct)
+			r.Put("/", controller.Repo.PutProduct)
 			r.Delete("/", controller.Repo.DeleteProduct)
+		})
+
+		r.Route("/provider", func(r chi.Router) {
+			r.Get("/", controller.Repo.GetProviders)
+			r.Post("/", controller.Repo.PostProvider)
+			r.Put("/", controller.Repo.PutProvider)
+			r.Delete("/", controller.Repo.DeleteProvider)
 		})
 	})
 
