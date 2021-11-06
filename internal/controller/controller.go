@@ -44,7 +44,7 @@ func (m *Repository) GetProducts(w http.ResponseWriter, r *http.Request) {
 
 // PostProduct handler for post request over product resource
 func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
-	var product models.Product
+	var product models.ProductDTO
 
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
@@ -56,6 +56,7 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		fmt.Println(err)
 		return
 	}
 
@@ -72,7 +73,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product := models.Product{}
+	product := models.ProductDTO{}
 	err = json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
@@ -139,7 +140,7 @@ func (m *Repository) GetProviders(w http.ResponseWriter, r *http.Request) {
 
 // PostProvider handler for post request over provider resource
 func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
-	var newProvider models.Provider
+	var newProvider models.ProviderDTO
 
 	err := json.NewDecoder(r.Body).Decode(&newProvider)
 	if err != nil {
@@ -181,7 +182,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var updatedProvider models.Provider
+	var updatedProvider models.ProviderDTO
 	err = json.NewDecoder(r.Body).Decode(&updatedProvider)
 	if err != nil {
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}

@@ -19,24 +19,33 @@ type Repository struct {
 }
 
 // InsertProduct inserts a product into database
-func (r *Repository) InsertProduct(product models.Product) error {
+func (r *Repository) InsertProduct(product models.ProductDTO) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	query := `
 		INSERT INTO producto (nombre, categoria_id, marca, precio, cantidad, descripcion)
-		VALUES ($1, $2, $3, $4, $5, $6);
+		VALUES ($1, $2, $3, $4, $5, $6) RETURNING producto_id;
 	`
 
-	_, err := r.db.ExecContext(ctx, query,
+	var newID int
+	err := r.db.QueryRowContext(ctx, query,
 		product.Name,
-		product.Category.CategoryID,
+		product.CategoryID,
 		product.Brand,
 		product.Price,
 		product.Amount,
 		product.Description,
-	)
+	).Scan(&newID)
+	if err != nil {
+		return err
+	}
 
+	query = `
+		INSERT INTO producto_proveedor (producto_id, proveedor_id, fecha_entrega)
+		VALUES ($1, $2, CURRENT_TIMESTAMP);
+	`
+	_, err = r.db.ExecContext(ctx, query, newID, product.ProviderID)
 	if err != nil {
 		return err
 	}
@@ -97,7 +106,7 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 }
 
 // UpdateProduct updates a product in database
-func (r *Repository) UpdateProduct(productID int, product models.Product) (int64, error) {
+func (r *Repository) UpdateProduct(productID int, product models.ProductDTO) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -118,7 +127,7 @@ func (r *Repository) UpdateProduct(productID int, product models.Product) (int64
 	result, err := r.db.ExecContext(ctx, query,
 		product.Name,
 		product.Brand,
-		product.Category.CategoryID,
+		product.CategoryID,
 		product.Price,
 		product.Amount,
 		product.Description,
@@ -187,7 +196,7 @@ func (r *Repository) GetAllProviders() ([]models.Provider, error) {
 }
 
 // InsertProvider inserts a provider in database
-func (r *Repository) InsertProvider(provider models.Provider) error {
+func (r *Repository) InsertProvider(provider models.ProviderDTO) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -209,7 +218,7 @@ func (r *Repository) InsertProvider(provider models.Provider) error {
 	return nil
 }
 
-func (r *Repository) UpdateProvider(providerID int, provider models.Provider) (int64, error) {
+func (r *Repository) UpdateProvider(providerID int, provider models.ProviderDTO) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 

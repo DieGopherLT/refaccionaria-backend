@@ -6,7 +6,7 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-func IsValidProvider(provider models.Provider) (bool, helpers.Response) {
+func IsValidProvider(provider models.ProviderDTO) (bool, helpers.Response) {
 	isEmail := govalidator.IsEmail(provider.Email)
 	if !isEmail {
 		resp := helpers.Response{Message: "Correo no válido", Error: true}

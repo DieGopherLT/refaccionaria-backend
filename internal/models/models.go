@@ -12,6 +12,7 @@ type Product struct {
 	Amount      int      `json:"amount"`
 	Description string   `json:"description"`
 	Category    Category `json:"category"`
+	Provider    Provider `json:"provider"`
 }
 
 type Category struct {
