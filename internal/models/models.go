@@ -25,7 +25,7 @@ type Provider struct {
 	Email      string `json:"email"`
 	Name       string `json:"name"`
 	Phone      string `json:"phone"`
-	Enterprise string `json:"enterprise"`
+	Enterprise string `json:"enterprise,omitempty"`
 }
 
 type ProductProvider struct {

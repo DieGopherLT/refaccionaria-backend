@@ -64,15 +64,22 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 			p.producto_id,
 			p.nombre,
 			p.marca,
-			c.categoria_id,
-			c.nombre as categoria,
+			p.descripcion,
 			p.precio,
 			p.cantidad,
-			p.descripcion
-		FROM
-			producto p
-			INNER JOIN categoria c ON p.categoria_id = c.categoria_id
-			ORDER BY p.producto_id;
+			c.categoria_id,
+			c.nombre as categoria,
+			pr.proveedor_id,
+		    pr.nombre,
+			pr.correo as correo_proveedor,
+			pr.telefono as tel_proveedor
+		FROM producto p
+		INNER JOIN categoria c
+			ON c.categoria_id = p.categoria_id
+		INNER JOIN producto_proveedor pp
+			ON pp.producto_id = p.producto_id
+		INNER JOIN proveedor pr
+			ON pp.proveedor_id = pr.proveedor_id;
 	`
 
 	rows, err := r.db.QueryContext(ctx, query)
@@ -81,21 +88,16 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 	}
 
 	for rows.Next() {
-		product := models.Product{}
+		p := models.Product{}
 		err := rows.Scan(
-			&product.ProductID,
-			&product.Name,
-			&product.Brand,
-			&product.Category.CategoryID,
-			&product.Category.Name,
-			&product.Price,
-			&product.Amount,
-			&product.Description,
+			&p.ProductID, &p.Name, &p.Brand, &p.Description, &p.Price, &p.Amount,
+			&p.Category.CategoryID, &p.Category.Name,
+			&p.Provider.ProviderID, &p.Provider.Name, &p.Provider.Email, &p.Provider.Phone,
 		)
 		if err != nil {
 			return nil, err
 		}
-		products = append(products, product)
+		products = append(products, p)
 	}
 
 	if err := rows.Err(); err != nil {
