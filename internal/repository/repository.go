@@ -20,4 +20,12 @@ type DatabaseRepo interface {
 	InsertProvider(provider models.ProviderDTO) error
 	UpdateProvider(providerId int, provider models.ProviderDTO) (int64, error)
 	DeleteProvider(providerID int) (int64, error)
+
+	/*
+		These are the functions for the sale CRUD
+	*/
+	GetAllSales() ([]models.Sale, error)
+	InsertSale(sale models.SaleDTO) error
+	UpdateSale(saleId int, sale models.SaleDTO) (int64, error)
+	DeleteSale(saleId int) (int64, error)
 }

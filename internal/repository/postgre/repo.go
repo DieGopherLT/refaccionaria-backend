@@ -220,6 +220,7 @@ func (r *Repository) InsertProvider(provider models.ProviderDTO) error {
 	return nil
 }
 
+// UpdateProvider updates a provider in database
 func (r *Repository) UpdateProvider(providerID int, provider models.ProviderDTO) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
@@ -255,12 +256,119 @@ func (r *Repository) UpdateProvider(providerID int, provider models.ProviderDTO)
 	return rows, nil
 }
 
+// DeleteProvider deletes a provider in database
 func (r *Repository) DeleteProvider(providerID int) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	query := `DELETE FROM proveedor WHERE proveedor_id = $1`
 	result, err := r.db.ExecContext(ctx, query, providerID)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+// GetAllSales fetches all sales stored in database
+func (r *Repository) GetAllSales() ([]models.Sale, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	sales := []models.Sale{}
+	query := `
+		SELECT 
+			v.venta_id,
+			v.fecha,
+			v.total,
+			v.cantidad,
+			p.producto_id,
+			p.nombre,
+			p.marca
+		FROM venta v
+		INNER JOIN producto p 
+			ON v.producto_id = p.producto_id;
+	`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		s := models.Sale{}
+		err := rows.Scan(
+			&s.SaleID, &s.Date, &s.Total, &s.Amount,
+			&s.Product.ProductID, &s.Product.Name, &s.Product.Brand,
+		)
+		if err != nil {
+			return nil, err
+		}
+		sales = append(sales, s)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return sales, nil
+}
+
+// InsertSale inserts a sale in database
+func (r *Repository) InsertSale(sale models.SaleDTO) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		INSERT INTO venta (producto_id, fecha, total, cantidad)
+		VALUES ($1, CURRENT_DATE, $2, $3);
+	`
+
+	_, err := r.db.ExecContext(ctx, query, sale.ProductID, sale.Total, sale.Amount)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateSale updates a sale in database
+func (r *Repository) UpdateSale(saleId int, sale models.SaleDTO) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		UPDATE venta
+		SET producto_id = $1, total = $2, cantidad = $3
+		WHERE venta_id = $4;
+	`
+
+	result, err := r.db.ExecContext(ctx, query, sale.ProductID, sale.Total, sale.Amount, saleId)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+// DeleteSale deletes a sale in database
+func (r *Repository) DeleteSale(saleId int) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `DELETE FROM venta WHERE venta_id = $1`
+
+	result, err := r.db.ExecContext(ctx, query, saleId)
 	if err != nil {
 		return 0, err
 	}

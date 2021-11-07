@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type ProductDTO struct {
 	Name        string  `json:"name"`
 	Brand       string  `json:"brand"`
@@ -15,4 +19,11 @@ type ProviderDTO struct {
 	Email      string `json:"email"`
 	Phone      string `json:"phone"`
 	Enterprise string `json:"enterprise"`
+}
+
+type SaleDTO struct {
+	ProductID int       `json:"product_id"`
+	Date      time.Time `json:"date"`
+	Total     float32   `json:"total"`
+	Amount    int       `json:"amount"`
 }

@@ -245,3 +245,116 @@ func (m *Repository) DeleteProvider(w http.ResponseWriter, r *http.Request) {
 	resp := helpers.Response{Message: "Registro eliminado"}
 	helpers.WriteJsonMessage(w, http.StatusOK, resp)
 }
+
+// GetSales handler for get request over sale resource
+func (m *Repository) GetSales(w http.ResponseWriter, r *http.Request) {
+	sales, err := m.db.GetAllSales()
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salio mal", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+	data := make(map[string]interface{})
+	data["sales"] = sales
+	data["error"] = false
+	helpers.WriteJsonResponse(w, http.StatusOK, data)
+}
+
+// PostSale handler for post request over sale resource
+func (m *Repository) PostSale(w http.ResponseWriter, r *http.Request) {
+	var newSale models.SaleDTO
+
+	err := json.NewDecoder(r.Body).Decode(&newSale)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	hasEmptyField := validator.HasEmptyStringField(newSale)
+	if hasEmptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	err = m.db.InsertSale(newSale)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Venta agregada exitosamente", Error: false}
+	helpers.WriteJsonMessage(w, http.StatusCreated, resp)
+}
+
+// PutSale handler for put request over sale resource
+func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
+	saleId, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	sale := models.SaleDTO{}
+	err = json.NewDecoder(r.Body).Decode(&sale)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	rows, err := m.db.UpdateSale(saleId, sale)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Registro actualizado extitosamente", Error: false}
+	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+}
+
+// DeleteSale handler for delete over sale resource
+func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
+	saleId, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	rows, err := m.db.DeleteSale(saleId)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Registro eliminado exitosamente", Error: false}
+	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+}
