@@ -5,42 +5,41 @@ import (
 )
 
 type Product struct {
-	ProductID   int      `json:"product_id"`
-	Name        string   `json:"name"`
-	Brand       string   `json:"brand"`
-	Price       float32  `json:"price"`
-	Amount      int      `json:"amount"`
-	Description string   `json:"description"`
-	Category    Category `json:"category"`
-	Provider    Provider `json:"provider"`
+	ProductID   int      `json:"product_id,omitempty"`
+	Name        string   `json:"name,omitempty"`
+	Brand       string   `json:"brand,omitempty"`
+	Price       float32  `json:"price,omitempty"`
+	Amount      int      `json:"amount,omitempty"`
+	Description string   `json:"description,omitempty"`
+	Category    Category `json:"category,omitempty"`
+	Provider    Provider `json:"provider,omitempty"`
 }
 
 type Category struct {
-	CategoryID int    `json:"category_id"`
-	Name       string `json:"name"`
+	CategoryID int    `json:"category_id,omitempty"`
+	Name       string `json:"name,omitempty"`
 }
 
 type Provider struct {
-	ProviderID int    `json:"provider_id"`
-	Email      string `json:"email"`
-	Name       string `json:"name"`
-	Phone      string `json:"phone"`
+	ProviderID int    `json:"provider_id,omitempty"`
+	Email      string `json:"email,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Phone      string `json:"phone,omitempty"`
 	Enterprise string `json:"enterprise,omitempty"`
 }
 
 type ProductProvider struct {
-	DeliveryDate time.Time `json:"delivery_date"`
-	ProductID    int       `json:"product_id"`
-	ProviderID   int       `json:"provider_id"`
-	Product      Product   `json:"product"`
-	Provider     Provider  `json:"provider"`
+	DeliveryDate time.Time `json:"delivery_date,omitempty"`
+	ProductID    int       `json:"product_id,omitempty"`
+	ProviderID   int       `json:"provider_id,omitempty"`
+	Product      Product   `json:"product,omitempty"`
+	Provider     Provider  `json:"provider,omitempty"`
 }
 
 type Sale struct {
-	SaleID    int       `json:"sale_id"`
-	ProductID int       `json:"product_id"`
-	Date      time.Time `json:"date"`
-	Amount    int       `json:"amount"`
-	Total     float32   `json:"total"`
-	Product   Product   `json:"product"`
+	SaleID  int       `json:"sale_id,omitempty"`
+	Date    time.Time `json:"date,omitempty"`
+	Amount  int       `json:"amount,omitempty"`
+	Total   float32   `json:"total,omitempty"`
+	Product Product   `json:"product,omitempty"`
 }
