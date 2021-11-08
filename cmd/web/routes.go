@@ -7,10 +7,16 @@ import (
 	"github.com/DieGopherLT/refaccionaria-backend/internal/controller"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rs/cors"
 )
 
 func Routes() http.Handler {
 	mux := chi.NewRouter()
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
 
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.Timeout(5 * time.Second))
@@ -42,5 +48,5 @@ func Routes() http.Handler {
 
 	})
 
-	return mux
+	return c.Handler(mux)
 }
