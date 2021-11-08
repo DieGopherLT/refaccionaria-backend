@@ -32,6 +32,7 @@ func NewHandlers(r *Repository) {
 func (m *Repository) GetProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := m.db.GetAllProducts()
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
@@ -49,14 +50,16 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envio en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	err = m.db.InsertProduct(product)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
-		fmt.Println(err)
 		return
 	}
 
@@ -68,6 +71,7 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	productId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -76,6 +80,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	product := models.ProductDTO{}
 	err = json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -83,6 +88,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := m.db.UpdateProduct(productId, product)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al actualizar el producto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
@@ -102,6 +108,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	productId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -109,6 +116,7 @@ func (m *Repository) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := m.db.DeleteProduct(productId)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al eliminar el producto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
@@ -128,6 +136,7 @@ func (m *Repository) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) GetProviders(w http.ResponseWriter, r *http.Request) {
 	providers, err := m.db.GetAllProviders()
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
@@ -144,6 +153,7 @@ func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newProvider)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -164,6 +174,7 @@ func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
 
 	err = m.db.InsertProvider(newProvider)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal con la inserción del registro", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
@@ -177,6 +188,7 @@ func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	providerId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -185,6 +197,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	var updatedProvider models.ProviderDTO
 	err = json.NewDecoder(r.Body).Decode(&updatedProvider)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -205,6 +218,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := m.db.UpdateProvider(providerId, updatedProvider)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Teléfono no válido", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -224,6 +238,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) DeleteProvider(w http.ResponseWriter, r *http.Request) {
 	providerId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
 		return
@@ -231,6 +246,7 @@ func (m *Repository) DeleteProvider(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := m.db.DeleteProvider(providerId)
 	if err != nil {
+		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al eliminar el proveedor", Error: true}
 		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
 		return
