@@ -140,6 +140,12 @@ func (r *Repository) UpdateProduct(productID int, product models.ProductDTO) (in
 		return 0, err
 	}
 
+	query = `UPDATE producto_proveedor SET proveedor_id = $1 WHERE producto_id = $2`
+	_, err = r.db.ExecContext(ctx, query, product.ProviderID, productID)
+	if err != nil {
+		return 0, err
+	}
+
 	rows, err := result.RowsAffected()
 	if err != nil {
 		return 0, err
