@@ -389,3 +389,18 @@ func (m *Repository) GetBrands(w http.ResponseWriter, r *http.Request) {
 	data["error"] = false
 	helpers.WriteJsonResponse(w, http.StatusOK, data)
 }
+
+// GetCategories handler for get request over category resource
+func (m *Repository) GetCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := m.db.GetAllCategories()
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salio mal", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+	data := make(map[string]interface{})
+	data["categories"] = categories
+	data["error"] = false
+	helpers.WriteJsonResponse(w, http.StatusOK, data)
+}

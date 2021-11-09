@@ -21,4 +21,6 @@ type DatabaseRepo interface {
 	DeleteSale(saleId int) (int64, error)
 
 	GetAllBrands() ([]string, error)
+
+	GetAllCategories() ([]models.Category, error)
 }

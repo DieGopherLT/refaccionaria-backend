@@ -408,3 +408,31 @@ func (r *Repository) GetAllBrands() ([]string, error) {
 	}
 	return brands, nil
 }
+
+func (r *Repository) GetAllCategories() ([]models.Category, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	categories := []models.Category{}
+	query := `SELECT categoria_id, nombre FROM categoria;`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		category := models.Category{}
+		err := rows.Scan(&category.CategoryID, &category.Name)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}

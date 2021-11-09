@@ -48,6 +48,10 @@ func Routes() http.Handler {
 			r.Route("/brand", func(r chi.Router) {
 				r.Get("/", controller.Repo.GetBrands)
 			})
+
+			r.Route("/category", func(r chi.Router) {
+				r.Get("/", controller.Repo.GetCategories)
+			})
 		})
 
 	})
