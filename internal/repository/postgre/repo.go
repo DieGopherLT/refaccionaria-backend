@@ -3,6 +3,7 @@ package postgre
 import (
 	"context"
 	"database/sql"
+	"sync"
 	"time"
 
 	"github.com/DieGopherLT/refaccionaria-backend/internal/models"
@@ -109,49 +110,77 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 
 // UpdateProduct updates a product in database
 func (r *Repository) UpdateProduct(productID int, product models.ProductDTO) (int64, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	wg := sync.WaitGroup{}
+	errChan := make(chan error)
+	resultChan := make(chan sql.Result)
+	defer close(errChan)
+	defer close(resultChan)
 
-	query := `
-		UPDATE
-			producto
-		SET
-			nombre = $1,
-			marca = $2,
-			categoria_id = $3,
-			precio = $4,
-			cantidad = $5,
-			descripcion = $6
-		WHERE
-			producto_id = $7
-	`
+	wg.Add(1)
 
-	result, err := r.db.ExecContext(ctx, query,
-		product.Name,
-		product.Brand,
-		product.CategoryID,
-		product.Price,
-		product.Amount,
-		product.Description,
-		productID,
-	)
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
 
-	if err != nil {
+		query := `
+			UPDATE
+				producto
+			SET
+				nombre = $1,
+				marca = $2,
+				categoria_id = $3,
+				precio = $4,
+				cantidad = $5,
+				descripcion = $6
+			WHERE
+				producto_id = $7;
+		`
+		result, err := r.db.ExecContext(ctx, query,
+			product.Name,
+			product.Brand,
+			product.CategoryID,
+			product.Price,
+			product.Amount,
+			product.Description,
+			productID,
+		)
+		wg.Wait()
+		if err != nil {
+			errChan <- err
+		}
+		resultChan <- result
+	}()
+
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+
+		query := `UPDATE producto_proveedor SET proveedor_id = $1 WHERE producto_id = $2`
+		_, err := r.db.ExecContext(ctx, query, product.ProviderID, productID)
+		if err != nil {
+			errChan <- err
+		}
+		wg.Done()
+	}()
+
+	var numRows int64
+	select {
+	case err := <-errChan:
 		return 0, err
+	case result := <-resultChan:
+		rows, err := result.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+		numRows = rows
+		break
 	}
 
-	query = `UPDATE producto_proveedor SET proveedor_id = $1 WHERE producto_id = $2`
-	_, err = r.db.ExecContext(ctx, query, product.ProviderID, productID)
-	if err != nil {
-		return 0, err
+	if numRows == 0 {
+		return 0, nil
 	}
 
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return 0, err
-	}
-
-	return rows, nil
+	return numRows, nil
 }
 
 // DeleteProduct deletes a product from the database
