@@ -374,3 +374,18 @@ func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
 	resp := helpers.Response{Message: "Registro eliminado exitosamente", Error: false}
 	helpers.WriteJsonMessage(w, http.StatusOK, resp)
 }
+
+// GetBrands handler for get request over brand resource
+func (m *Repository) GetBrands(w http.ResponseWriter, r *http.Request) {
+	brands, err := m.db.GetAllBrands()
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salio mal", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+	data := make(map[string]interface{})
+	data["brands"] = brands
+	data["error"] = false
+	helpers.WriteJsonResponse(w, http.StatusOK, data)
+}

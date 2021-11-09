@@ -380,3 +380,31 @@ func (r *Repository) DeleteSale(saleId int) (int64, error) {
 
 	return rows, nil
 }
+
+// GetAllBrands brings all the brands from providers from database without duplicates
+func (r *Repository) GetAllBrands() ([]string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	brands := []string{}
+	query := `SELECT DISTINCT empresa FROM proveedor;`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		brand := ""
+		err := rows.Scan(&brand)
+		if err != nil {
+			return nil, err
+		}
+		brands = append(brands, brand)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return brands, nil
+}
