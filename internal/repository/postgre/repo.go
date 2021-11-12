@@ -324,7 +324,8 @@ func (r *Repository) GetAllSales() ([]models.Sale, error) {
 			v.cantidad,
 			p.producto_id,
 			p.nombre,
-			p.marca
+			p.marca,
+		    p.precio
 		FROM venta v
 		INNER JOIN producto p 
 			ON v.producto_id = p.producto_id;
@@ -339,7 +340,7 @@ func (r *Repository) GetAllSales() ([]models.Sale, error) {
 		s := models.Sale{}
 		err := rows.Scan(
 			&s.SaleID, &s.Date, &s.Total, &s.Amount,
-			&s.Product.ProductID, &s.Product.Name, &s.Product.Brand,
+			&s.Product.ProductID, &s.Product.Name, &s.Product.Brand, &s.Product.Price,
 		)
 		if err != nil {
 			return nil, err
@@ -444,6 +445,7 @@ func (r *Repository) GetAllBrands() ([]string, error) {
 	return brands, nil
 }
 
+// GetAllCategories fetches all categories from database
 func (r *Repository) GetAllCategories() ([]models.Category, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
