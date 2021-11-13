@@ -20,6 +20,10 @@ type DatabaseRepo interface {
 	UpdateSale(saleId int, sale models.SaleDTO) (int64, error)
 	DeleteSale(saleId int) (int64, error)
 
+	GetAllDeliveries() ([]models.Delivery, error)
+	InsertDelivery(delivery models.DeliveryDTO) (int64, error)
+	DeleteDelivery(productID, providerID int) (int64, error)
+
 	GetAllBrands() ([]string, error)
 
 	GetAllCategories() ([]models.Category, error)

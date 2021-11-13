@@ -9,7 +9,7 @@ type Product struct {
 	Name        string   `json:"name,omitempty"`
 	Brand       string   `json:"brand,omitempty"`
 	Price       float32  `json:"price,omitempty"`
-	Amount      int      `json:"amount,omitempty"`
+	Amount      int      `json:"amount"`
 	Description string   `json:"description,omitempty"`
 	Category    Category `json:"category,omitempty"`
 	Provider    Provider `json:"provider,omitempty"`
@@ -28,18 +28,17 @@ type Provider struct {
 	Enterprise string `json:"enterprise,omitempty"`
 }
 
-type ProductProvider struct {
+type Delivery struct {
 	DeliveryDate time.Time `json:"delivery_date,omitempty"`
-	ProductID    int       `json:"product_id,omitempty"`
-	ProviderID   int       `json:"provider_id,omitempty"`
 	Product      Product   `json:"product,omitempty"`
 	Provider     Provider  `json:"provider,omitempty"`
+	Amount       int       `json:"amount,omitempty"`
 }
 
 type Sale struct {
 	SaleID  int       `json:"sale_id,omitempty"`
 	Date    time.Time `json:"date,omitempty"`
-	Amount  int       `json:"amount,omitempty"`
+	Amount  int       `json:"amount"`
 	Total   float32   `json:"total,omitempty"`
 	Product Product   `json:"product,omitempty"`
 }

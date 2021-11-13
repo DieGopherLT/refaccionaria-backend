@@ -346,7 +346,7 @@ func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteJsonMessage(w, http.StatusOK, resp)
 }
 
-// DeleteSale handler for delete over sale resource
+// DeleteSale handler for delete request over sale resource
 func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
 	saleId, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
@@ -372,6 +372,85 @@ func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := helpers.Response{Message: "Registro eliminado exitosamente", Error: false}
+	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+}
+
+// GetDeliveries handler for get request over delivery resource
+func (m *Repository) GetDeliveries(w http.ResponseWriter, r *http.Request) {
+	deliveries, err := m.db.GetAllDeliveries()
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusOK, resp)
+		return
+	}
+	data := make(map[string]interface{})
+	data["deliveries"] = deliveries
+	data["error"] = false
+	helpers.WriteJsonResponse(w, http.StatusOK, data)
+}
+
+func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
+	var deliveryDTO models.DeliveryDTO
+
+	err := json.NewDecoder(r.Body).Decode(&deliveryDTO)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	rows, err := m.db.InsertDelivery(deliveryDTO)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		resp := helpers.Response{Message: "No se encontró el producto o proveedor", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Entrega registrada correctamente", Error: false}
+	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+}
+
+func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
+	productId, err := strconv.Atoi(r.URL.Query().Get("productId"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	providerId, err := strconv.Atoi(r.URL.Query().Get("providerId"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	rows, err := m.db.DeleteDelivery(productId, providerId)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		resp := helpers.Response{Message: "No se encontró la enctrega", Error: true}
+		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Entrega dada de alta", Error: true}
 	helpers.WriteJsonMessage(w, http.StatusOK, resp)
 }
 

@@ -45,6 +45,12 @@ func Routes() http.Handler {
 				r.Delete("/", controller.Repo.DeleteSale)
 			})
 
+			r.Route("/delivery", func(r chi.Router) {
+				r.Get("/", controller.Repo.GetDeliveries)
+				r.Post("/", controller.Repo.PostDelivery)
+				r.Delete("/", controller.Repo.DeleteDelivery)
+			})
+
 			r.Route("/brand", func(r chi.Router) {
 				r.Get("/", controller.Repo.GetBrands)
 			})

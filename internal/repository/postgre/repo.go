@@ -26,25 +26,25 @@ func (r *Repository) InsertProduct(product models.ProductDTO) error {
 
 	query := `
 		INSERT INTO producto (nombre, categoria_id, marca, precio, cantidad, descripcion)
-		VALUES ($1, $2, $3, $4, $5, $6) RETURNING producto_id;
+		VALUES ($1, $2, $3, $4, $5, $6);
 	`
 
 	var newID int
-	err := r.db.QueryRowContext(ctx, query,
+	_, err := r.db.ExecContext(ctx, query,
 		product.Name,
 		product.CategoryID,
 		product.Brand,
 		product.Price,
 		product.Amount,
 		product.Description,
-	).Scan(&newID)
+	)
 	if err != nil {
 		return err
 	}
 
 	query = `
 		INSERT INTO producto_proveedor (producto_id, proveedor_id, fecha_entrega)
-		VALUES ($1, $2, CURRENT_TIMESTAMP);
+		VALUES ($1, $2, NULL);
 	`
 	_, err = r.db.ExecContext(ctx, query, newID, product.ProviderID)
 	if err != nil {
@@ -405,6 +405,102 @@ func (r *Repository) DeleteSale(saleId int) (int64, error) {
 	query := `DELETE FROM venta WHERE venta_id = $1`
 
 	result, err := r.db.ExecContext(ctx, query, saleId)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+// GetAllDeliveries brings all the deliveries from database
+func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	deliveries := []models.Delivery{}
+	query := `
+		SELECT 
+			po.nombre,
+			po.marca,
+			pr.nombre,
+			pr.correo,
+			pp.fecha_entrega,
+			pp.cantidad
+		FROM 
+			producto_proveedor pp
+		INNER JOIN producto po
+			ON pp.producto_id = po.producto_id
+		INNER JOIN proveedor pr
+			ON pp.proveedor_id = pr.proveedor_id
+		WHERE pp.fecha_entrega IS NOT NULL;
+	`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		d := models.Delivery{}
+		err := rows.Scan(
+			&d.Product.Name, &d.Product.Brand,
+			&d.Provider.Name, &d.Provider.Email,
+			&d.DeliveryDate, &d.Amount,
+		)
+		if err != nil {
+			return nil, err
+		}
+		deliveries = append(deliveries, d)
+	}
+
+	return deliveries, nil
+}
+
+// InsertDelivery inserts a delivery in database
+func (r *Repository) InsertDelivery(delivery models.DeliveryDTO) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		UPDATE producto_proveedor
+		SET fecha_entrega = $1, cantidad = $2
+		WHERE producto_id = $3 AND proveedor_id = $4;
+	`
+
+	result, err := r.db.ExecContext(ctx, query,
+		delivery.DeliveryDate,
+		delivery.Amount,
+		delivery.ProductID,
+		delivery.ProviderID,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
+func (r *Repository) DeleteDelivery(productID, providerID int) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		UPDATE producto_proveedor
+		SET fecha_entrega = NULL, cantidad = NULL
+		WHERE producto_id = $1 AND proveedor_id = $2; 
+	`
+
+	result, err := r.db.ExecContext(ctx, query, productID, providerID)
 	if err != nil {
 		return 0, err
 	}

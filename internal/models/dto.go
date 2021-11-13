@@ -27,3 +27,10 @@ type SaleDTO struct {
 	Total     float32   `json:"total"`
 	Amount    int       `json:"amount"`
 }
+
+type DeliveryDTO struct {
+	ProductID    int       `json:"product_id"`
+	ProviderID   int       `json:"provider_id"`
+	DeliveryDate time.Time `json:"delivery_date"`
+	Amount       int       `json:"amount"`
+}
