@@ -29,8 +29,8 @@ type SaleDTO struct {
 }
 
 type DeliveryDTO struct {
-	ProductID    int       `json:"product_id"`
-	ProviderID   int       `json:"provider_id"`
-	DeliveryDate time.Time `json:"delivery_date"`
-	Amount       int       `json:"amount"`
+	ProductID    int    `json:"product_id"`
+	ProviderID   int    `json:"provider_id"`
+	DeliveryDate string `json:"delivery_date"`
+	Amount       int    `json:"amount"`
 }
