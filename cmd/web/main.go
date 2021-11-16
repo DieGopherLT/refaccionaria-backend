@@ -56,7 +56,7 @@ func LoadEnvironmentVariables(path string) error {
 	return nil
 }
 
-// BuildDatabasePool loads environment variables and does the database connection
+// BuildDatabasePool builds the database pool by using an specific builder
 func BuildDatabasePool(builder driver.DatabasePoolConnectionBuilder, connectionUrl string) (*sql.DB, error) {
 
 	db, err := driver.CreateDatabaseConnection(builder, connectionUrl)
