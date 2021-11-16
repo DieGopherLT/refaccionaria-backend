@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,14 +17,20 @@ const PORT = 4000
 
 func main() {
 
-	db, err := RunDatabaseAndEnvVariables()
+	err := LoadEnvironmentVariables(".env")
+	if err != nil {
+		log.Fatalln("could not load environment variables", err.Error())
+	}
+
+	postgresSqlBuilder := postgre.NewBuilder()
+	postgresConnectionURl := os.Getenv("POSTGRE_CONN")
+	db, err := BuildDatabasePool(postgresSqlBuilder, postgresConnectionURl)
 	if err != nil {
 		log.Fatalln("application could not start", err.Error())
-		return
 	}
-	defer db.GetPool().Close()
+	defer db.Close()
 
-	postgreRepo := postgre.NewRepository(db.GetPool())
+	postgreRepo := postgre.NewRepository(db)
 	repo := controller.NewHandlersRepo(postgreRepo)
 	controller.SetHandlersRepo(repo)
 
@@ -40,19 +47,19 @@ func main() {
 	}
 }
 
-// RunDatabaseAndEnvVariables loads environment variables and does the database connection
-func RunDatabaseAndEnvVariables() (driver.DatabasePoolConnectionBuilder, error) {
-
-	// Loading environment variables
-	err := godotenv.Load(".env")
+// LoadEnvironmentVariables loads environment variables from a certain path
+func LoadEnvironmentVariables(path string) error {
+	err := godotenv.Load(path)
 	if err != nil {
-		log.Fatalln("could not load environment variables", err.Error())
-		return nil, err
+		return err
 	}
+	return nil
+}
 
-	postgreDbBuilder := postgre.NewBuilder()
-	postgreConnectionURl := os.Getenv("POSTGRE_CONN")
-	db, err := driver.CreateDatabaseConnection(postgreDbBuilder, postgreConnectionURl)
+// BuildDatabasePool loads environment variables and does the database connection
+func BuildDatabasePool(builder driver.DatabasePoolConnectionBuilder, connectionUrl string) (*sql.DB, error) {
+
+	db, err := driver.CreateDatabaseConnection(builder, connectionUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -63,5 +70,5 @@ func RunDatabaseAndEnvVariables() (driver.DatabasePoolConnectionBuilder, error) 
 	}
 
 	fmt.Println("Postgres database connected")
-	return db, nil
+	return db.GetPool(), nil
 }
