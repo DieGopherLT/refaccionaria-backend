@@ -4,9 +4,10 @@ import (
 	"database/sql"
 )
 
-// ConnectSQL by applying polymorphism, creates and returns a database.
-// It's something like a builder director
-func ConnectSQL(db SQLDatabase, dsn string) (SQLDatabase, error) {
+// CreateDatabaseConnection by applying polymorphism, creates and returns a database.
+//
+// It's something like a builder director.
+func CreateDatabaseConnection(db DatabasePoolConnectionBuilder, dsn string) (DatabasePoolConnectionBuilder, error) {
 	err := db.CreatePool(dsn)
 	if err != nil {
 		return nil, err
@@ -15,7 +16,8 @@ func ConnectSQL(db SQLDatabase, dsn string) (SQLDatabase, error) {
 	return db, nil
 }
 
-func TestSQL(db *sql.DB) error {
+// TestDatabaseConnection tests database connection by pinging to it
+func TestDatabaseConnection(db *sql.DB) error {
 	err := db.Ping()
 	if err != nil {
 		return err

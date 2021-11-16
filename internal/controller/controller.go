@@ -18,13 +18,13 @@ type Repository struct {
 	db repository.DatabaseRepo
 }
 
-func NewRepo(db repository.DatabaseRepo) *Repository {
+func NewHandlersRepo(db repository.DatabaseRepo) *Repository {
 	return &Repository{
 		db: db,
 	}
 }
 
-func NewHandlers(r *Repository) {
+func SetHandlersRepo(r *Repository) {
 	Repo = r
 }
 

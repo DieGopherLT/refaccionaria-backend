@@ -16,7 +16,7 @@ const PORT = 4000
 
 func main() {
 
-	db, err := Run()
+	db, err := RunDatabaseAndEnvVariables()
 	if err != nil {
 		log.Fatalln("application could not start", err.Error())
 		return
@@ -24,8 +24,8 @@ func main() {
 	defer db.GetPool().Close()
 
 	postgreRepo := postgre.NewRepository(db.GetPool())
-	repo := controller.NewRepo(postgreRepo)
-	controller.NewHandlers(repo)
+	repo := controller.NewHandlersRepo(postgreRepo)
+	controller.SetHandlersRepo(repo)
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", PORT),
@@ -40,7 +40,8 @@ func main() {
 	}
 }
 
-func Run() (driver.SQLDatabase, error) {
+// RunDatabaseAndEnvVariables loads environment variables and does the database connection
+func RunDatabaseAndEnvVariables() (driver.DatabasePoolConnectionBuilder, error) {
 
 	// Loading environment variables
 	err := godotenv.Load(".env")
@@ -49,17 +50,18 @@ func Run() (driver.SQLDatabase, error) {
 		return nil, err
 	}
 
-	// Connection to database
-	db, err := driver.ConnectSQL(postgre.NewBuilder(), os.Getenv("POSTGRE_CONN"))
+	postgreDbBuilder := postgre.NewBuilder()
+	postgreConnectionURl := os.Getenv("POSTGRE_CONN")
+	db, err := driver.CreateDatabaseConnection(postgreDbBuilder, postgreConnectionURl)
 	if err != nil {
 		return nil, err
 	}
-	// Test database connection
-	err = driver.TestSQL(db.GetPool())
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println("Postgres database connected")
 
+	err = driver.TestDatabaseConnection(db.GetPool())
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("Postgres database connected")
 	return db, nil
 }

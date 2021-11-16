@@ -4,9 +4,9 @@ import (
 	"database/sql"
 )
 
-// SQLDatabase A database builder
-type SQLDatabase interface {
-	CreatePool(dsn string) error
+// DatabasePoolConnectionBuilder A database builder
+type DatabasePoolConnectionBuilder interface {
+	CreatePool(connectionURL string) error
 	ConfigurePool()
 	GetPool() *sql.DB
 }

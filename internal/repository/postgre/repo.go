@@ -9,9 +9,9 @@ import (
 	"github.com/DieGopherLT/refaccionaria-backend/internal/models"
 )
 
-func NewRepository(db *sql.DB) *Repository {
+func NewRepository(pool *sql.DB) *Repository {
 	return &Repository{
-		db: db,
+		db: pool,
 	}
 }
 
