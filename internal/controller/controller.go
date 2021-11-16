@@ -14,16 +14,19 @@ import (
 
 var Repo *Repository
 
+// Repository is a repository that will store all handlers for incoming http requests
 type Repository struct {
 	db repository.DatabaseRepo
 }
 
+// NewHandlersRepo creates a new repository for handlers with a database pool connection
 func NewHandlersRepo(db repository.DatabaseRepo) *Repository {
 	return &Repository{
 		db: db,
 	}
 }
 
+// SetHandlersRepo sets the repository for handlers that will be used on routes
 func SetHandlersRepo(r *Repository) {
 	Repo = r
 }
