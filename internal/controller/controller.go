@@ -390,6 +390,7 @@ func (m *Repository) GetDeliveries(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteJsonResponse(w, http.StatusOK, data)
 }
 
+// PostDelivery handler for post request over delivery resource
 func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	var deliveryDTO models.DeliveryDTO
 
@@ -419,6 +420,7 @@ func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteJsonMessage(w, http.StatusOK, resp)
 }
 
+// DeleteDelivery handler for delete request over delivery resoruce
 func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	productId, err := strconv.Atoi(r.URL.Query().Get("productId"))
 	if err != nil {

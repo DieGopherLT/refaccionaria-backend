@@ -490,6 +490,7 @@ func (r *Repository) InsertDelivery(delivery models.DeliveryDTO) (int64, error) 
 	return rows, nil
 }
 
+// DeleteDelivery "deletes" a delivery in frontend perspective, it just updates some fields to NULL
 func (r *Repository) DeleteDelivery(productID, providerID int) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
