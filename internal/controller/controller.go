@@ -37,7 +37,7 @@ func (m *Repository) GetProducts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 	data := make(map[string]interface{})
@@ -54,7 +54,7 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envio en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -62,12 +62,12 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Producto creado"}
-	helpers.WriteJsonMessage(w, http.StatusCreated, resp)
+	helpers.WriteJsonResponse(w, http.StatusCreated, resp)
 }
 
 // PutProduct handler for put request over product resource
@@ -76,7 +76,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -85,7 +85,7 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -93,18 +93,18 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al actualizar el producto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "Registro no encontrado"}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Producto actualizado"}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // DeleteProduct handler for delete request over product resource
@@ -113,7 +113,7 @@ func (m *Repository) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -121,18 +121,18 @@ func (m *Repository) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al eliminar el producto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "Registro no encontrado"}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Registro eliminado"}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // GetProviders handler for get request over provider resource
@@ -141,7 +141,7 @@ func (m *Repository) GetProviders(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 	data := make(map[string]interface{})
@@ -158,20 +158,20 @@ func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	emptyField := validator.HasEmptyStringField(newProvider)
 	if emptyField {
 		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	isValid, resp := validator.IsValidProvider(newProvider)
 	if !isValid {
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -179,12 +179,12 @@ func (m *Repository) PostProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal con la inserción del registro", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	resp = helpers.Response{Message: "Proveedor registrado correctamente"}
-	helpers.WriteJsonMessage(w, http.StatusCreated, resp)
+	helpers.WriteJsonResponse(w, http.StatusCreated, resp)
 }
 
 // PutProvider handler for put request over provider resource
@@ -193,7 +193,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -202,20 +202,20 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	emptyField := validator.HasEmptyStringField(updatedProvider)
 	if emptyField {
 		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	isValid, resp := validator.IsValidProvider(updatedProvider)
 	if !isValid {
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -223,18 +223,18 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Teléfono no válido", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp = helpers.Response{Message: "Registro actualizado exitosamente"}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // DeleteProvider handler for delete request over provider resource
@@ -243,7 +243,7 @@ func (m *Repository) DeleteProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -251,18 +251,18 @@ func (m *Repository) DeleteProvider(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Error al eliminar el proveedor", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Registro eliminado"}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // GetSales handler for get request over sale resource
@@ -271,7 +271,7 @@ func (m *Repository) GetSales(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 	data := make(map[string]interface{})
@@ -288,14 +288,14 @@ func (m *Repository) PostSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
 	hasEmptyField := validator.HasEmptyStringField(newSale)
 	if hasEmptyField {
 		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -303,12 +303,12 @@ func (m *Repository) PostSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Venta agregada exitosamente", Error: false}
-	helpers.WriteJsonMessage(w, http.StatusCreated, resp)
+	helpers.WriteJsonResponse(w, http.StatusCreated, resp)
 }
 
 // PutSale handler for put request over sale resource
@@ -317,7 +317,7 @@ func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -326,7 +326,7 @@ func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -334,19 +334,19 @@ func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Registro actualizado extitosamente", Error: false}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // DeleteSale handler for delete request over sale resource
@@ -355,7 +355,7 @@ func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -363,19 +363,19 @@ func (m *Repository) DeleteSale(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Registro no encontrado", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Registro eliminado exitosamente", Error: false}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // GetDeliveries handler for get request over delivery resource
@@ -384,7 +384,7 @@ func (m *Repository) GetDeliveries(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusOK, resp)
+		helpers.WriteJsonResponse(w, http.StatusOK, resp)
 		return
 	}
 	data := make(map[string]interface{})
@@ -401,7 +401,7 @@ func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -409,18 +409,18 @@ func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "No se encontró el producto o proveedor", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Entrega registrada correctamente", Error: false}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // DeleteDelivery handler for delete request over delivery resoruce
@@ -429,7 +429,7 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -437,7 +437,7 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusBadRequest, resp)
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
 
@@ -445,18 +445,18 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 
 	if rows == 0 {
 		resp := helpers.Response{Message: "No se encontró la enctrega", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusNotFound, resp)
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Entrega dada de alta", Error: true}
-	helpers.WriteJsonMessage(w, http.StatusOK, resp)
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // GetBrands handler for get request over brand resource
@@ -465,7 +465,7 @@ func (m *Repository) GetBrands(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 	data := make(map[string]interface{})
@@ -480,7 +480,7 @@ func (m *Repository) GetCategories(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "Algo salio mal", Error: true}
-		helpers.WriteJsonMessage(w, http.StatusInternalServerError, resp)
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
 		return
 	}
 	data := make(map[string]interface{})
