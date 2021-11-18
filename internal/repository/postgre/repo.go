@@ -458,6 +458,10 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 		deliveries = append(deliveries, d)
 	}
 
+	if err := rows.Err(); err != nil {
+		return deliveries, err
+	}
+
 	return deliveries, nil
 }
 
