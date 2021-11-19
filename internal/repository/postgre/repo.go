@@ -424,9 +424,11 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 
 	deliveries := []models.Delivery{}
 	query := `
-		SELECT 
+		SELECT
+		    po.producto_id,
 			po.nombre,
 			po.marca,
+		    pr.proveedor_id,
 			pr.nombre,
 			pr.correo,
 			pp.fecha_entrega,
@@ -448,8 +450,8 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 	for rows.Next() {
 		d := models.Delivery{}
 		err := rows.Scan(
-			&d.Product.Name, &d.Product.Brand,
-			&d.Provider.Name, &d.Provider.Email,
+			&d.Product.ProductID, &d.Product.Name, &d.Product.Brand,
+			&d.Provider.ProviderID, &d.Provider.Name, &d.Provider.Email,
 			&d.DeliveryDate, &d.Amount,
 		)
 		if err != nil {
