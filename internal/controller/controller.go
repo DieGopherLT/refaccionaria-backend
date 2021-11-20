@@ -423,7 +423,7 @@ func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
-// DeleteDelivery handler for delete request over delivery resoruce
+// DeleteDelivery handler for delete request over delivery resource
 func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	productId, err := strconv.Atoi(r.URL.Query().Get("productId"))
 	if err != nil {
@@ -450,13 +450,33 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if rows == 0 {
-		resp := helpers.Response{Message: "No se encontró la enctrega", Error: true}
+		resp := helpers.Response{Message: "No se encontró la entrega", Error: true}
 		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
 		return
 	}
 
 	resp := helpers.Response{Message: "Entrega dada de alta", Error: true}
 	helpers.WriteJsonResponse(w, http.StatusOK, resp)
+}
+
+// GetClients handler for get request over client resource
+func (m *Repository) GetClients(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// PostClient handler for post request over client resource
+func (m *Repository) PostClient(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// PutClient handler for put request over client resource
+func (m *Repository) PutClient(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// DeleteClient handler for delete request over client resource
+func (m *Repository) DeleteClient(w http.ResponseWriter, r *http.Request) {
+
 }
 
 // GetBrands handler for get request over brand resource
