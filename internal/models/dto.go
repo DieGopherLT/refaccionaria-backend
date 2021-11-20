@@ -36,3 +36,9 @@ type DeliveryDTO struct {
 	DeliveryDate string `json:"delivery_date"`
 	Amount       int    `json:"amount"`
 }
+
+type ClientDTO struct {
+	Name    string `json:"name,omitempty"`
+	Address string `json:"address,omitempty"`
+	Phone   string `json:"phone,omitempty"`
+}

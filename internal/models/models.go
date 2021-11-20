@@ -45,3 +45,8 @@ type Sale struct {
 	SubTotal float32   `json:"sub_total,omitempty"`
 	Product  Product   `json:"product,omitempty"`
 }
+
+type Client struct {
+	ClientID int `json:"client_id,omitempty"`
+	ClientDTO
+}
