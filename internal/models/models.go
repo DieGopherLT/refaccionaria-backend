@@ -21,11 +21,13 @@ type Category struct {
 }
 
 type Provider struct {
-	ProviderID int    `json:"provider_id,omitempty"`
-	Email      string `json:"email,omitempty"`
-	Name       string `json:"name,omitempty"`
-	Phone      string `json:"phone,omitempty"`
-	Enterprise string `json:"enterprise,omitempty"`
+	ProviderID    int     `json:"provider_id,omitempty"`
+	Email         string  `json:"email,omitempty"`
+	Name          string  `json:"name,omitempty"`
+	Phone         string  `json:"phone,omitempty"`
+	Enterprise    string  `json:"enterprise,omitempty"`
+	Address       string  `json:"address,omitempty"`
+	ProviderPrice float32 `json:"provider_price,omitempty"`
 }
 
 type Delivery struct {
@@ -36,9 +38,10 @@ type Delivery struct {
 }
 
 type Sale struct {
-	SaleID  int       `json:"sale_id,omitempty"`
-	Date    time.Time `json:"date,omitempty"`
-	Amount  int       `json:"amount"`
-	Total   float32   `json:"total,omitempty"`
-	Product Product   `json:"product,omitempty"`
+	SaleID   int       `json:"sale_id,omitempty"`
+	Date     time.Time `json:"date,omitempty"`
+	Amount   int       `json:"amount"`
+	Total    float32   `json:"total,omitempty"`
+	SubTotal float32   `json:"sub_total,omitempty"`
+	Product  Product   `json:"product,omitempty"`
 }
