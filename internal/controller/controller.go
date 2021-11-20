@@ -59,6 +59,13 @@ func (m *Repository) PostProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	emptyField := validator.HasEmptyStringField(product)
+	if emptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
 	err = m.db.InsertProduct(product)
 	if err != nil {
 		fmt.Println(err)
@@ -86,6 +93,13 @@ func (m *Repository) PutProduct(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envío en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	emptyField := validator.HasEmptyStringField(product)
+	if emptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
 		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
