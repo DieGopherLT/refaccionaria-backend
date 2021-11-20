@@ -26,6 +26,7 @@ type DatabaseRepo interface {
 
 	GetAllClients() ([]models.Client, error)
 	InsertClient(client models.ClientDTO) error
+	UpdateClient(cliendId int, client models.ClientDTO) (int64, error)
 	DeleteClient(clientId int) (int64, error)
 
 	GetAllBrands() ([]string, error)

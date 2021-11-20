@@ -54,7 +54,7 @@ func Routes() http.Handler {
 			r.Route("/client", func(r chi.Router) {
 				r.Get("/", controller.Repo.GetClients)
 				r.Post("/", controller.Repo.PostClient)
-				r.Put("/", controller.Repo.PutClient)
+				r.Put("/{id}", controller.Repo.PutClient)
 				r.Delete("/{id}", controller.Repo.DeleteClient)
 			})
 

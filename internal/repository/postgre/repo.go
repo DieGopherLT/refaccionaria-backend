@@ -605,6 +605,30 @@ func (r *Repository) InsertClient(client models.ClientDTO) error {
 	return nil
 }
 
+// UpdateClient updates a client in database
+func (r *Repository) UpdateClient(cliendId int, client models.ClientDTO) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		UPDATE cliente
+		SET nombre_cliente = $1, telefono_cliente = $2, direccion_cliente = $3
+		WHERE id_cliente = $4;
+	`
+
+	result, err := r.db.ExecContext(ctx, query, client.Name, client.Phone, client.Address, cliendId)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
 // DeleteClient deletes a client in database
 func (r *Repository) DeleteClient(clientId int) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)

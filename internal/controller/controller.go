@@ -507,7 +507,46 @@ func (m *Repository) PostClient(w http.ResponseWriter, r *http.Request) {
 
 // PutClient handler for put request over client resource
 func (m *Repository) PutClient(w http.ResponseWriter, r *http.Request) {
+	var client models.ClientDTO
 
+	clientId, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&client)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	isValid, resp := validator.IsValidClient(client)
+	if !isValid {
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	rows, err := m.db.UpdateClient(clientId, client)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		resp := helpers.Response{Message: "Cliente no encontrado", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp = helpers.Response{Message: "Cliente actualizado exitosamente", Error: false}
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // DeleteClient handler for delete request over client resource
