@@ -24,6 +24,9 @@ type DatabaseRepo interface {
 	InsertDelivery(delivery models.DeliveryDTO) (int64, error)
 	DeleteDelivery(productID, providerID int) (int64, error)
 
+	GetAllClients() ([]models.Client, error)
+	InsertClient(client models.ClientDTO) error
+
 	GetAllBrands() ([]string, error)
 
 	GetAllCategories() ([]models.Category, error)

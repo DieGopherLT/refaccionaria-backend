@@ -551,6 +551,60 @@ func (r *Repository) DeleteDelivery(productID, providerID int) (int64, error) {
 	return rows, nil
 }
 
+// GetAllClients fetches all clients from database
+func (r *Repository) GetAllClients() ([]models.Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	clients := []models.Client{}
+	query := `
+		 SELECT 
+			id_cliente,
+		    nombre_cliente,
+		    direccion_cliente,
+		    telefono_cliente
+		FROM
+			cliente;
+	`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		c := models.Client{}
+		err := rows.Scan(&c.ClientID, &c.Name, &c.Address, &c.Phone)
+		if err != nil {
+			return nil, err
+		}
+		clients = append(clients, c)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return clients, nil
+}
+
+// InsertClient inserts a client into database
+func (r *Repository) InsertClient(client models.ClientDTO) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `
+		INSERT INTO cliente (nombre_cliente, telefono_cliente, direccion_cliente)
+		VALUES ($1, $2, $3);
+`
+	_, err := r.db.ExecContext(ctx, query, client.Name, client.Phone, client.Address)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetAllBrands brings all the brands from providers from database without duplicates
 func (r *Repository) GetAllBrands() ([]string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)

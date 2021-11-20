@@ -461,12 +461,47 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 
 // GetClients handler for get request over client resource
 func (m *Repository) GetClients(w http.ResponseWriter, r *http.Request) {
-
+	clients, err := m.db.GetAllClients()
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
+		return
+	}
+	data := make(map[string]interface{})
+	data["clients"] = clients
+	data["error"] = false
+	helpers.WriteJsonResponse(w, http.StatusOK, data)
 }
 
 // PostClient handler for post request over client resource
 func (m *Repository) PostClient(w http.ResponseWriter, r *http.Request) {
+	var client models.ClientDTO
 
+	err := json.NewDecoder(r.Body).Decode(&client)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información fue enviada en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	isValid, resp := validator.IsValidClient(client)
+	if !isValid {
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	err = m.db.InsertClient(client)
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	resp = helpers.Response{Message: "Cliente registrado exitosamente", Error: false}
+	helpers.WriteJsonResponse(w, http.StatusCreated, resp)
 }
 
 // PutClient handler for put request over client resource
