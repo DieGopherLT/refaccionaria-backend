@@ -10,6 +10,7 @@ import (
 	"github.com/DieGopherLT/refaccionaria-backend/internal/models"
 	"github.com/DieGopherLT/refaccionaria-backend/internal/repository"
 	"github.com/DieGopherLT/refaccionaria-backend/internal/validator"
+	"github.com/go-chi/chi/v5"
 )
 
 var Repo *Repository
@@ -511,7 +512,32 @@ func (m *Repository) PutClient(w http.ResponseWriter, r *http.Request) {
 
 // DeleteClient handler for delete request over client resource
 func (m *Repository) DeleteClient(w http.ResponseWriter, r *http.Request) {
+	clientId, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
 
+	rows, err := m.db.DeleteClient(clientId)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusInternalServerError, resp)
+		return
+	}
+
+	if rows == 0 {
+		fmt.Println(err)
+		resp := helpers.Response{Message: "Cliente no encontrado", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusNotFound, resp)
+		return
+	}
+
+	resp := helpers.Response{Message: "Cliente dado de baja", Error: false}
+	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 
 // GetBrands handler for get request over brand resource

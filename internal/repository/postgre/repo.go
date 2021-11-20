@@ -605,6 +605,25 @@ func (r *Repository) InsertClient(client models.ClientDTO) error {
 	return nil
 }
 
+// DeleteClient deletes a client in database
+func (r *Repository) DeleteClient(clientId int) (int64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	query := `DELETE FROM cliente WHERE id_cliente = $1;`
+	result, err := r.db.ExecContext(ctx, query, clientId)
+	if err != nil {
+		return 0, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rows, nil
+}
+
 // GetAllBrands brings all the brands from providers from database without duplicates
 func (r *Repository) GetAllBrands() ([]string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
