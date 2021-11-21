@@ -392,11 +392,17 @@ func (r *Repository) InsertSale(sale models.SaleDTO) error {
 	defer cancel()
 
 	query := `
-		INSERT INTO venta (id_producto, fecha, total, cantidad_vendida)
-		VALUES ($1, CURRENT_DATE, $2, $3);
+		INSERT INTO venta (id_producto, id_cliente, fecha, subtotal, total, cantidad_vendida)
+		VALUES ($1, $2, CURRENT_DATE, $3, $5, $6);
 	`
 
-	_, err := r.db.ExecContext(ctx, query, sale.ProductID, sale.Total, sale.Amount)
+	_, err := r.db.ExecContext(ctx, query,
+		sale.ProductID,
+		sale.ClientID,
+		sale.Subtotal,
+		sale.Total,
+		sale.Amount,
+	)
 	if err != nil {
 		return err
 	}
