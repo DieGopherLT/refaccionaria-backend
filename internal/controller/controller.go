@@ -345,6 +345,13 @@ func (m *Repository) PutSale(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hasEmptyField := validator.HasEmptyStringField(sale)
+	if hasEmptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
 	rows, err := m.db.UpdateSale(saleId, sale)
 	if err != nil {
 		fmt.Println(err)
@@ -416,6 +423,13 @@ func (m *Repository) PostDelivery(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	hasEmptyField := validator.HasEmptyStringField(deliveryDTO)
+	if hasEmptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
 		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
@@ -501,6 +515,13 @@ func (m *Repository) PostClient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hasEmptyField := validator.HasEmptyStringField(client)
+	if hasEmptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
 	isValid, resp := validator.IsValidClient(client)
 	if !isValid {
 		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
@@ -535,6 +556,13 @@ func (m *Repository) PutClient(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		resp := helpers.Response{Message: "La información se envió en un formato incorrecto", Error: true}
+		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
+		return
+	}
+
+	hasEmptyField := validator.HasEmptyStringField(client)
+	if hasEmptyField {
+		resp := helpers.Response{Message: "Todos los campos son obligatorios", Error: true}
 		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
