@@ -484,7 +484,7 @@ func (m *Repository) DeleteDelivery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := helpers.Response{Message: "Entrega dada de alta", Error: true}
+	resp := helpers.Response{Message: "Entrega dada de alta", Error: false}
 	helpers.WriteJsonResponse(w, http.StatusOK, resp)
 }
 

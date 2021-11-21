@@ -71,7 +71,7 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 			c.id_categoria,
 			c.nombre_categoria as categoria,
 			pr.codigo,
-		    pr.nombre_proveedor,
+			pr.nombre_proveedor,
 			pr.correo as correo_proveedor,
 			pr.telefono_proveedor as tel_proveedor
 		FROM producto p
@@ -393,7 +393,7 @@ func (r *Repository) InsertSale(sale models.SaleDTO) error {
 
 	query := `
 		INSERT INTO venta (id_producto, id_cliente, fecha, subtotal, total, cantidad_vendida)
-		VALUES ($1, $2, CURRENT_DATE, $3, $5, $6);
+		VALUES ($1, $2, CURRENT_DATE, $3, $4, $5);
 	`
 
 	_, err := r.db.ExecContext(ctx, query,
