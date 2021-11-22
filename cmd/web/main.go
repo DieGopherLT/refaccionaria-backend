@@ -13,8 +13,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const PORT = 4000
-
 func main() {
 
 	err := LoadEnvironmentVariables(".env")
@@ -34,12 +32,13 @@ func main() {
 	repo := controller.NewHandlersRepo(postgreRepo)
 	controller.SetHandlersRepo(repo)
 
+	port := os.Getenv("PORT")
 	server := http.Server{
-		Addr:    fmt.Sprintf(":%d", PORT),
+		Addr:    fmt.Sprintf(":%s", port),
 		Handler: Routes(),
 	}
 
-	fmt.Println("Server working on port", PORT)
+	fmt.Println("Server working on port", port)
 	err = server.ListenAndServe()
 	if err != nil {
 		log.Fatalln("could not initialize server", err.Error())
