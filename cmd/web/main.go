@@ -14,14 +14,18 @@ import (
 )
 
 func main() {
+	var postgresConnectionURl, port string
 
-	err := LoadEnvironmentVariables(".env")
-	if err != nil {
-		log.Fatalln("could not load environment variables", err.Error())
+	postgresConnectionURl, port = os.Getenv("POSTGRE_CONN"), os.Getenv("PORT")
+	if postgresConnectionURl == "" || port == "" {
+		envs, err := LoadEnvironmentVariables(".env")
+		if err != nil {
+			log.Fatalln("could not load environment variables", err.Error())
+		}
+		postgresConnectionURl, port = envs["POSTGRE_CONN"], envs["PORT"]
 	}
 
 	postgresSqlBuilder := postgre.NewBuilder()
-	postgresConnectionURl := os.Getenv("POSTGRE_CONN")
 	db, err := BuildDatabasePool(postgresSqlBuilder, postgresConnectionURl)
 	if err != nil {
 		log.Fatalln("application could not start", err.Error())
@@ -32,7 +36,6 @@ func main() {
 	repo := controller.NewHandlersRepo(postgreRepo)
 	controller.SetHandlersRepo(repo)
 
-	port := os.Getenv("PORT")
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
 		Handler: Routes(),
@@ -47,12 +50,12 @@ func main() {
 }
 
 // LoadEnvironmentVariables loads environment variables from a certain path
-func LoadEnvironmentVariables(path string) error {
-	err := godotenv.Load(path)
+func LoadEnvironmentVariables(path string) (map[string]string, error) {
+	envs, err := godotenv.Read(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return envs, nil
 }
 
 // BuildDatabasePool builds the database pool by using an specific builder
