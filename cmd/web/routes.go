@@ -21,6 +21,11 @@ func Routes() http.Handler {
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.Timeout(5 * time.Second))
 
+	mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		message := []byte("Server is working")
+		w.Write(message)
+	})
+
 	mux.Route("/api", func(r chi.Router) {
 
 		r.Route("/v1", func(r chi.Router) {
