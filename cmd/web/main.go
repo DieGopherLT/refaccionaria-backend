@@ -16,13 +16,13 @@ import (
 func main() {
 	var postgresConnectionURl, port string
 
-	postgresConnectionURl, port = os.Getenv("POSTGRE_CONN"), os.Getenv("PORT")
+	postgresConnectionURl, port = os.Getenv("DATABASE_URL"), os.Getenv("PORT")
 	if postgresConnectionURl == "" || port == "" {
 		envs, err := LoadEnvironmentVariables(".env")
 		if err != nil {
 			log.Fatalln("could not load environment variables", err.Error())
 		}
-		postgresConnectionURl, port = envs["POSTGRE_CONN"], envs["PORT"]
+		postgresConnectionURl, port = envs["DATABASE_URL"], envs["PORT"]
 	}
 
 	postgresSqlBuilder := postgre.NewBuilder()
