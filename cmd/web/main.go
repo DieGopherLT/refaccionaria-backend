@@ -14,9 +14,8 @@ import (
 )
 
 func main() {
-	var postgresConnectionURl, port string
 
-	postgresConnectionURl, port = os.Getenv("DATABASE_URL"), os.Getenv("PORT")
+	postgresConnectionURl, port := os.Getenv("DATABASE_URL"), os.Getenv("PORT")
 	if postgresConnectionURl == "" || port == "" {
 		envs, err := LoadEnvironmentVariables(".env")
 		if err != nil {
