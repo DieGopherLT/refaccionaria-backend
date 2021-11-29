@@ -25,18 +25,18 @@ func (r *Repository) InsertProduct(product models.ProductDTO) error {
 	defer cancel()
 
 	query := `
-		INSERT INTO producto (nombre_producto, id_categoria, marca, precio_publico, stock, descripcion)
+		INSERT INTO producto (clasificacion, id_categoria, marca, precio_publico, precio_proveedor, stock)
 		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_producto;
 	`
 
 	var newID int
 	err := r.db.QueryRowContext(ctx, query,
-		product.Name,
+		product.Classification,
 		product.CategoryID,
 		product.Brand,
-		product.Price,
+		product.PublicPrice,
+		product.ProviderPrice,
 		product.Amount,
-		product.Description,
 	).Scan(&newID)
 	if err != nil {
 		return err
@@ -63,10 +63,10 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 	query := `
 		SELECT
 			p.id_producto,
-			p.nombre_producto,
+			p.clasificacion,
 			p.marca,
-			p.descripcion,
 			p.precio_publico,
+			p.precio_proveedor,
 			p.stock,
 			c.id_categoria,
 			c.nombre_categoria as categoria,
@@ -91,7 +91,7 @@ func (r *Repository) GetAllProducts() ([]models.Product, error) {
 	for rows.Next() {
 		p := models.Product{}
 		err := rows.Scan(
-			&p.ProductID, &p.Name, &p.Brand, &p.Description, &p.Price, &p.Amount,
+			&p.ProductID, &p.Classification, &p.Brand, &p.PublicPrice, &p.ProviderPrice, &p.Amount,
 			&p.Category.CategoryID, &p.Category.Name,
 			&p.Provider.ProviderID, &p.Provider.Name, &p.Provider.Email, &p.Provider.Phone,
 		)
@@ -130,22 +130,22 @@ func (r *Repository) UpdateProduct(productID int, product models.ProductDTO) (in
 			UPDATE
 				producto
 			SET
-				nombre_producto = $1,
+				clasificacion = $1,
 				marca = $2,
 				id_categoria = $3,
 				precio_publico = $4,
-			    stock = $5,
-				descripcion = $6
+			    precio_proveedor = $5,
+			    stock = $6
 			WHERE
 				id_producto = $7;
 		`
 		result, err := r.db.ExecContext(ctx, query,
-			product.Name,
+			product.Classification,
 			product.Brand,
 			product.CategoryID,
-			product.Price,
+			product.PublicPrice,
+			product.ProviderPrice,
 			product.Amount,
-			product.Description,
 			productID,
 		)
 		wg.Wait()
@@ -220,8 +220,7 @@ func (r *Repository) GetAllProviders() ([]models.Provider, error) {
 		   correo, 
 		   telefono_proveedor, 
 		   empresa,
-		   direccion_proveedor,
-		   precio_proveedor
+		   direccion_proveedor
 		FROM 
 		     proveedor;
 	`
@@ -240,7 +239,6 @@ func (r *Repository) GetAllProviders() ([]models.Provider, error) {
 			&provider.Phone,
 			&provider.Enterprise,
 			&provider.Address,
-			&provider.ProviderPrice,
 		)
 		if err != nil {
 			return nil, err
@@ -262,9 +260,9 @@ func (r *Repository) InsertProvider(provider models.ProviderDTO) error {
 
 	query := `
 		INSERT INTO proveedor 
-		    (nombre_proveedor, correo, telefono_proveedor, empresa, direccion_proveedor, precio_proveedor)
+		    (nombre_proveedor, correo, telefono_proveedor, empresa, direccion_proveedor)
 		VALUES 
-		       ($1, $2, $3, $4, $5, $6);
+		       ($1, $2, $3, $4, $5);
 	`
 
 	_, err := r.db.ExecContext(ctx, query,
@@ -273,7 +271,6 @@ func (r *Repository) InsertProvider(provider models.ProviderDTO) error {
 		provider.Phone,
 		provider.Enterprise,
 		provider.Address,
-		provider.ProviderPrice,
 	)
 	if err != nil {
 		return err
@@ -295,10 +292,9 @@ func (r *Repository) UpdateProvider(providerID int, provider models.ProviderDTO)
 			correo = $2,
 			telefono_proveedor = $3,
 			empresa = $4,
-		    direccion_proveedor = $5,
-		    precio_proveedor = $6
+		    direccion_proveedor = $5
 		WHERE
-			codigo = $7;
+			codigo = $6;
 	`
 
 	result, err := r.db.ExecContext(ctx, query,
@@ -307,7 +303,6 @@ func (r *Repository) UpdateProvider(providerID int, provider models.ProviderDTO)
 		provider.Phone,
 		provider.Enterprise,
 		provider.Address,
-		provider.ProviderPrice,
 		providerID,
 	)
 	if err != nil {
@@ -354,7 +349,7 @@ func (r *Repository) GetAllSales() ([]models.Sale, error) {
 			v.total,
 			v.cantidad_vendida,
 			p.id_producto,
-			p.nombre_producto,
+			p.clasificacion,
 			p.marca,
 		    p.precio_publico
 		FROM venta v
@@ -371,7 +366,7 @@ func (r *Repository) GetAllSales() ([]models.Sale, error) {
 		s := models.Sale{}
 		err := rows.Scan(
 			&s.SaleID, &s.Date, &s.Total, &s.Amount,
-			&s.Product.ProductID, &s.Product.Name, &s.Product.Brand, &s.Product.Price,
+			&s.Product.ProductID, &s.Product.Classification, &s.Product.Brand, &s.Product.PublicPrice,
 		)
 		if err != nil {
 			return nil, err
@@ -463,7 +458,7 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 	query := `
 		SELECT
 		    po.id_producto,
-			po.nombre_producto,
+			po.clasificacion,
 			po.marca,
 		    pr.codigo,
 			pr.nombre_proveedor,
@@ -487,7 +482,7 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 	for rows.Next() {
 		d := models.Delivery{}
 		err := rows.Scan(
-			&d.Product.ProductID, &d.Product.Name, &d.Product.Brand,
+			&d.Product.ProductID, &d.Product.Classification, &d.Product.Brand,
 			&d.Provider.ProviderID, &d.Provider.Name, &d.Provider.Email,
 			&d.DeliveryDate, &d.Amount,
 		)

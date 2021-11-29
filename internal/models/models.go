@@ -5,14 +5,14 @@ import (
 )
 
 type Product struct {
-	ProductID   int      `json:"product_id,omitempty"`
-	Name        string   `json:"name,omitempty"`
-	Brand       string   `json:"brand,omitempty"`
-	Price       float32  `json:"price,omitempty"`
-	Amount      int      `json:"amount"`
-	Description string   `json:"description,omitempty"`
-	Category    Category `json:"category,omitempty"`
-	Provider    Provider `json:"provider,omitempty"`
+	ProductID      int      `json:"product_id,omitempty"`
+	Classification string   `json:"classification"`
+	Brand          string   `json:"brand,omitempty"`
+	PublicPrice    float32  `json:"public_price"`
+	ProviderPrice  float32  `json:"provider_price"`
+	Amount         int      `json:"amount"`
+	Category       Category `json:"category,omitempty"`
+	Provider       Provider `json:"provider,omitempty"`
 }
 
 type Category struct {
@@ -21,13 +21,12 @@ type Category struct {
 }
 
 type Provider struct {
-	ProviderID    int     `json:"provider_id,omitempty"`
-	Email         string  `json:"email,omitempty"`
-	Name          string  `json:"name,omitempty"`
-	Phone         string  `json:"phone,omitempty"`
-	Enterprise    string  `json:"enterprise,omitempty"`
-	Address       string  `json:"address,omitempty"`
-	ProviderPrice float32 `json:"provider_price,omitempty"`
+	ProviderID int    `json:"provider_id,omitempty"`
+	Email      string `json:"email,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Phone      string `json:"phone,omitempty"`
+	Enterprise string `json:"enterprise,omitempty"`
+	Address    string `json:"address,omitempty"`
 }
 
 type Delivery struct {

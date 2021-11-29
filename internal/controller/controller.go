@@ -237,7 +237,7 @@ func (m *Repository) PutProvider(w http.ResponseWriter, r *http.Request) {
 	rows, err := m.db.UpdateProvider(providerId, updatedProvider)
 	if err != nil {
 		fmt.Println(err)
-		resp := helpers.Response{Message: "Teléfono no válido", Error: true}
+		resp := helpers.Response{Message: "Algo salió mal...", Error: true}
 		helpers.WriteJsonResponse(w, http.StatusBadRequest, resp)
 		return
 	}
