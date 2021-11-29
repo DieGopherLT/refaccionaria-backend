@@ -460,6 +460,7 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 		    po.id_producto,
 			po.clasificacion,
 			po.marca,
+		    c.nombre_categoria,
 		    pr.codigo,
 			pr.nombre_proveedor,
 			pr.correo,
@@ -471,6 +472,8 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 			ON pp.id_producto = po.id_producto
 		INNER JOIN proveedor pr
 			ON pp.id_proveedor = pr.codigo
+		INNER JOIN categoria c 
+		    ON po.id_categoria = c.id_categoria
 		WHERE pp.fecha_entrega IS NOT NULL;
 	`
 
@@ -482,7 +485,7 @@ func (r *Repository) GetAllDeliveries() ([]models.Delivery, error) {
 	for rows.Next() {
 		d := models.Delivery{}
 		err := rows.Scan(
-			&d.Product.ProductID, &d.Product.Classification, &d.Product.Brand,
+			&d.Product.ProductID, &d.Product.Classification, &d.Product.Brand, &d.Product.Category.Name,
 			&d.Provider.ProviderID, &d.Provider.Name, &d.Provider.Email,
 			&d.DeliveryDate, &d.Amount,
 		)
